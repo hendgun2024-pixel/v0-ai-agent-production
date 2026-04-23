@@ -14,7 +14,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch logs' }, { status: 500 })
     }
 
-    return NextResponse.json({ logs: data })
+    // Return logs in ascending order for display (oldest first)
+    const sortedLogs = data?.reverse() || []
+    return NextResponse.json(sortedLogs)
   } catch (error) {
     console.error('Fetch logs error:', error)
     return NextResponse.json({ error: 'Failed to fetch logs' }, { status: 500 })

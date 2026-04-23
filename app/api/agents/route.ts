@@ -13,7 +13,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch agents' }, { status: 500 })
     }
 
-    return NextResponse.json({ agents: data })
+    return NextResponse.json(data || [])
   } catch (error) {
     console.error('Fetch agents error:', error)
     return NextResponse.json({ error: 'Failed to fetch agents' }, { status: 500 })

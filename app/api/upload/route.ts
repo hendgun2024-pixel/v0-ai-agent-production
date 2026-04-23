@@ -41,8 +41,10 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json({ 
-      url: blob.url, 
-      video: data 
+      id: data.id,
+      filename: file.name,
+      pathname: blob.pathname,
+      url: blob.url
     })
   } catch (error) {
     console.error('Upload error:', error)

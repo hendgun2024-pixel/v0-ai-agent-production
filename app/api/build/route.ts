@@ -1,92 +1,112 @@
-import { type NextRequest, NextResponse } from 'next/server'
+import { type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
-  try {
-    const { video_id } = await request.json()
+  const { videoId } = await request.json()
 
-    if (!video_id) {
-      return NextResponse.json({ error: 'Video ID is required' }, { status: 400 })
-    }
-
-    const supabase = await createClient()
-
-    // Create build record
-    const { data: build, error: buildError } = await supabase
-      .from('builds')
-      .insert({
-        video_id,
-        status: 'building',
-        progress: 0,
-      })
-      .select()
-      .single()
-
-    if (buildError) {
-      return NextResponse.json({ error: 'Failed to create build' }, { status: 500 })
-    }
-
-    // Add log
-    await supabase.from('session_logs').insert({
-      message: 'Build process started...',
-      log_type: 'info',
+  if (!videoId) {
+    return new Response(JSON.stringify({ error: 'Video ID is required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
     })
-
-    return NextResponse.json({ build })
-  } catch (error) {
-    console.error('Build error:', error)
-    return NextResponse.json({ error: 'Build failed' }, { status: 500 })
   }
-}
 
-export async function PATCH(request: NextRequest) {
-  try {
-    const { build_id, progress, status, result } = await request.json()
+  const encoder = new TextEncoder()
+  const stream = new ReadableStream({
+    async start(controller) {
+      const send = (data: object) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
+      }
 
-    if (!build_id) {
-      return NextResponse.json({ error: 'Build ID is required' }, { status: 400 })
-    }
+      try {
+        const supabase = await createClient()
 
-    const supabase = await createClient()
+        // Create build record
+        const { data: build, error: buildError } = await supabase
+          .from('builds')
+          .insert({
+            video_id: videoId,
+            status: 'building',
+            progress: 0,
+          })
+          .select()
+          .single()
 
-    const updateData: Record<string, unknown> = {}
-    if (progress !== undefined) updateData.progress = progress
-    if (status) updateData.status = status
-    if (result) updateData.result = result
-    if (status === 'completed') updateData.completed_at = new Date().toISOString()
+        if (buildError) {
+          send({ error: 'Failed to create build', status: 'failed' })
+          controller.close()
+          return
+        }
 
-    const { data, error } = await supabase
-      .from('builds')
-      .update(updateData)
-      .eq('id', build_id)
-      .select()
-      .single()
+        // Add initial log
+        await supabase.from('session_logs').insert({
+          message: 'Build process initialized...',
+          log_type: 'info',
+        })
 
-    if (error) {
-      return NextResponse.json({ error: 'Failed to update build' }, { status: 500 })
-    }
+        send({ progress: 10, status: 'building', message: 'Build process initialized...', type: 'info' })
 
-    // Add progress logs
-    if (progress === 30) {
-      await supabase.from('session_logs').insert({
-        message: 'Merging Agents data...',
-        log_type: 'info',
-      })
-    } else if (progress === 70) {
-      await supabase.from('session_logs').insert({
-        message: 'Applying Verified Key Signature...',
-        log_type: 'info',
-      })
-    } else if (progress === 100) {
-      await supabase.from('session_logs').insert({
-        message: 'BUILD SUCCESS: Content Ready for Distribution.',
-        log_type: 'success',
-      })
-    }
+        // Simulate build stages
+        const stages = [
+          { progress: 25, message: 'Analyzing video content...', delay: 800 },
+          { progress: 40, message: 'Merging Agents data...', delay: 1000 },
+          { progress: 55, message: 'Generating captions...', delay: 800 },
+          { progress: 70, message: 'Applying Verified Key Signature...', delay: 1000 },
+          { progress: 85, message: 'Optimizing for platforms...', delay: 700 },
+          { progress: 95, message: 'Finalizing build...', delay: 500 },
+        ]
 
-    return NextResponse.json({ build: data })
-  } catch (error) {
-    console.error('Update build error:', error)
-    return NextResponse.json({ error: 'Failed to update build' }, { status: 500 })
-  }
+        for (const stage of stages) {
+          await new Promise(resolve => setTimeout(resolve, stage.delay))
+          
+          await supabase.from('session_logs').insert({
+            message: stage.message,
+            log_type: 'info',
+          })
+
+          send({ progress: stage.progress, message: stage.message, type: 'info' })
+        }
+
+        // Complete the build
+        const result = 'Your viral video content is ready! Optimized for TikTok, Instagram Reels, and YouTube Shorts with AI-generated captions and hooks.'
+
+        await supabase
+          .from('builds')
+          .update({
+            status: 'completed',
+            progress: 100,
+            result,
+            completed_at: new Date().toISOString(),
+          })
+          .eq('id', build.id)
+
+        await supabase.from('session_logs').insert({
+          message: 'BUILD SUCCESS: Content Ready for Distribution.',
+          log_type: 'success',
+        })
+
+        send({ 
+          progress: 100, 
+          status: 'completed', 
+          message: 'BUILD SUCCESS: Content Ready for Distribution.',
+          type: 'success',
+          result 
+        })
+
+      } catch (error) {
+        console.error('Build error:', error)
+        send({ error: 'Build failed', status: 'failed' })
+      } finally {
+        controller.close()
+      }
+    },
+  })
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
+  })
 }
