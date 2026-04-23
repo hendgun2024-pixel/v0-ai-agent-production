@@ -7,6 +7,9 @@ import { ProductionWorkspace } from "@/components/dashboard/production-workspace
 import { VideoUpload } from "@/components/dashboard/video-upload"
 import { SessionLogs } from "@/components/dashboard/session-logs"
 import { BuildWorkflow } from "@/components/dashboard/build-workflow"
+import { MusicGenerator } from "@/components/dashboard/music-generator"
+import { LipSyncStudio } from "@/components/dashboard/lipsync-studio"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { mutate } from "swr"
 
 export default function Dashboard() {
@@ -41,30 +44,67 @@ export default function Dashboard() {
       
       <main className="p-6">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-6 lg:grid-cols-12">
-            {/* Left Column - Agent Status & Video Upload */}
-            <div className="space-y-6 lg:col-span-3">
-              <AgentStatus />
-              <VideoUpload 
-                onUploadComplete={handleUploadComplete}
-                onLogMessage={addLog}
-              />
-            </div>
+          <Tabs defaultValue="production" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+              <TabsTrigger value="production">Production</TabsTrigger>
+              <TabsTrigger value="music">MusicFul AI</TabsTrigger>
+              <TabsTrigger value="lipsync">Lip-Sync Studio</TabsTrigger>
+            </TabsList>
 
-            {/* Center Column - Production Workspace */}
-            <div className="lg:col-span-6">
-              <ProductionWorkspace onAnalysisComplete={handleAnalysisComplete} />
-            </div>
+            {/* Production Tab */}
+            <TabsContent value="production" className="space-y-6">
+              <div className="grid gap-6 lg:grid-cols-12">
+                {/* Left Column - Agent Status & Video Upload */}
+                <div className="space-y-6 lg:col-span-3">
+                  <AgentStatus />
+                  <VideoUpload 
+                    onUploadComplete={handleUploadComplete}
+                    onLogMessage={addLog}
+                  />
+                </div>
 
-            {/* Right Column - Session Logs & Build Workflow */}
-            <div className="space-y-6 lg:col-span-3">
-              <SessionLogs />
-              <BuildWorkflow 
-                videoId={currentVideoId}
-                onLogMessage={addLog}
-              />
-            </div>
-          </div>
+                {/* Center Column - Production Workspace */}
+                <div className="lg:col-span-6">
+                  <ProductionWorkspace onAnalysisComplete={handleAnalysisComplete} />
+                </div>
+
+                {/* Right Column - Session Logs & Build Workflow */}
+                <div className="space-y-6 lg:col-span-3">
+                  <SessionLogs />
+                  <BuildWorkflow 
+                    videoId={currentVideoId}
+                    onLogMessage={addLog}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* MusicFul AI Tab */}
+            <TabsContent value="music" className="space-y-6">
+              <div className="grid gap-6 lg:grid-cols-12">
+                <div className="lg:col-span-8">
+                  <MusicGenerator />
+                </div>
+                <div className="space-y-6 lg:col-span-4">
+                  <AgentStatus />
+                  <SessionLogs />
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Lip-Sync Studio Tab */}
+            <TabsContent value="lipsync" className="space-y-6">
+              <div className="grid gap-6 lg:grid-cols-12">
+                <div className="lg:col-span-8">
+                  <LipSyncStudio />
+                </div>
+                <div className="space-y-6 lg:col-span-4">
+                  <AgentStatus />
+                  <SessionLogs />
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </div>
