@@ -79,34 +79,30 @@ export default function Dashboard() {
               </div>
             </TabsContent>
 
-            {/* MusicFul AI Tab */}
-            <TabsContent value="music" className="space-y-6">
-              <div className="grid gap-6 lg:grid-cols-12">
-                <div className="lg:col-span-8">
-                  <MusicGenerator />
-                </div>
-                <div className="space-y-6 lg:col-span-4">
-                  <AgentStatus />
-                  <SessionLogs />
-                </div>
-              </div>
-            </TabsContent>
+            /* Cari bagian MusicFul AI dan ganti isinya dengan ini */
+<TabsContent value="music">
+  <Card>
+    <CardHeader>
+      <CardTitle className="text-primary">MusicFul AI Generator</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      <Textarea placeholder="Describe the music you want to generate..." className="bg-secondary" />
+      <Button className="w-full bg-primary text-black">Generate AI Music</Button>
+    </CardContent>
+  </Card>
+</TabsContent>
 
-            {/* Lip-Sync Studio Tab */}
-            <TabsContent value="lipsync" className="space-y-6">
-              <div className="grid gap-6 lg:grid-cols-12">
-                <div className="lg:col-span-8">
-                  <LipSyncStudio />
-                </div>
-                <div className="space-y-6 lg:col-span-4">
-                  <AgentStatus />
-                  <SessionLogs />
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-    </div>
-  )
-}
+/* Cari bagian Lip-Sync Studio dan ganti isinya dengan ini */
+<TabsContent value="lipsync">
+  <Card>
+    <CardHeader>
+      <CardTitle className="text-primary">Lip-Sync Studio</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="border-2 border-dashed border-border p-10 text-center rounded-lg">
+        <p>Upload source video and voice audio to sync</p>
+      </div>
+      <Button className="w-full mt-4 bg-primary text-black">Start Syncing</Button>
+    </CardContent>
+  </Card>
+</TabsContent>
