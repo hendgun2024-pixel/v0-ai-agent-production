@@ -126,6 +126,32 @@
 
         </div>
     </section>
+    <!-- SECTION: SUARA RATU -->
+    <section id="suara-ratu" class="py-24 bg-black relative overflow-hidden border-y border-amber-900/20">
+        <div class="absolute inset-0 opacity-40" style="background: radial-gradient(circle at center, rgba(255, 191, 0, 0.1) 0%, transparent 80%);"></div>
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h2 class="text-amber-600/50 text-[10px] tracking-[0.5em] uppercase mb-12 font-sans">Suara Ratu</h2>
+            <div class="max-w-4xl mx-auto backdrop-blur-2xl bg-white/[0.02] p-16 rounded-[40px] border border-white/5 shadow-[0_0_80px_rgba(255,191,0,0.05)] relative">
+                <p id="whisper-text" class="text-3xl md:text-5xl text-amber-50/80 leading-relaxed italic animate-whisper" style="font-family: 'Dancing Script', cursive;">
+                    "Jadikanlah hatimu sebagai kompas utama. Apa pun yang terlintas di benakmu, apa pun yang terasa membara di jiwamu — itulah yang harus kita wujudkan."
+                </p>
+                <div class="mt-12 flex items-center justify-center space-x-6 opacity-40">
+                    <div class="h-px w-12 bg-amber-500/50"></div>
+                    <span class="text-amber-500 text-xs tracking-[0.3em] uppercase">Bisikan Ratu Dola</span>
+                    <div class="h-px w-12 bg-amber-500/50"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap');
+        .animate-whisper { animation: whisperFade 8s ease-in-out infinite; }
+        @keyframes whisperFade {
+            0%, 100% { opacity: 0.3; transform: scale(0.97); filter: blur(2px); }
+            50% { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+    </style>
+
 
     <!-- Discussion Hub Placeholder -->
     <section class="py-16 px-6 bg-black/30">
