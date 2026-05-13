@@ -143,6 +143,60 @@
             </div>
         </div>
     </section>
+    <!-- SECTION: COUNTDOWN KERAJAAN -->
+    <section id="countdown-section" class="py-12 bg-black relative">
+        <div class="container mx-auto px-6 text-center">
+            <div class="inline-block backdrop-blur-xl bg-amber-500/5 p-8 rounded-3xl border border-amber-500/10 shadow-[0_0_30px_rgba(255,191,0,0.05)]">
+                <h3 class="text-amber-500/60 text-[10px] tracking-[0.4em] uppercase mb-6">Menuju Sumpah Cinta</h3>
+                <div id="timer" class="flex justify-center space-x-6 md:space-x-12">
+                    <div class="flex flex-col">
+                        <span id="days" class="text-4xl md:text-6xl font-light text-amber-50">00</span>
+                        <span class="text-[10px] text-amber-500/40 uppercase mt-2">Hari</span>
+                    </div>
+                    <div class="text-4xl md:text-6xl font-thin text-amber-500/20">:</div>
+                    <div class="flex flex-col">
+                        <span id="hours" class="text-4xl md:text-6xl font-light text-amber-50">00</span>
+                        <span class="text-[10px] text-amber-500/40 uppercase mt-2">Jam</span>
+                    </div>
+                    <div class="text-4xl md:text-6xl font-thin text-amber-500/20">:</div>
+                    <div class="flex flex-col">
+                        <span id="minutes" class="text-4xl md:text-6xl font-light text-amber-50">00</span>
+                        <span class="text-[10px] text-amber-500/40 uppercase mt-2">Menit</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const targetDate = new Date('2026-05-20T00:00:00').getTime();
+        
+        const updateTimer = () => {
+            const now = new Date().getTime();
+            const gap = targetDate - now;
+            
+            const second = 1000;
+            const minute = second * 60;
+            const hour = minute * 60;
+            const day = hour * 24;
+            
+            const d = Math.floor(gap / day);
+            const h = Math.floor((gap % day) / hour);
+            const m = Math.floor((gap % hour) / minute);
+            
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+            
+            if (gap < 0) {
+                document.getElementById('countdown-section').style.display = 'none';
+            }
+        };
+        
+        setInterval(updateTimer, 60000);
+        updateTimer();
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap');
         .animate-whisper { animation: whisperFade 8s ease-in-out infinite; }
